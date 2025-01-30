@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning Assignment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #4CAF50;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 5px;
+            display: block;
+            margin: 10px 0;
+        }
+    </style>
+</head><body><h1><span style="color: rgb(0, 68, 137);"><img src="examples_new.png" alt="" title="" style="max-width: 100%;" data-d2l-editor-default-img-style="true"></span></h1>
+<h1 style="text-align: center;"><span style="color: rgb(0, 68, 137);">Lab#1: Image Classification with Python</span></h1>
+<p><strong>Objective:</strong> Build an image classifier using Python to predict house numbers in Google Street View images.</p>
+<p>source:<a href="https://github.com/elliebirbeck/sklearn-tutorial">https://github.com/elliebirbeck/sklearn-tutorial</a>&nbsp;</p>
+<h2><span style="color: rgb(0, 68, 137); font-size: 32px;">Part 1: Differentiate between classification and regression tasks with examples.</span><span style="color: rgb(0, 68, 137);"></span></h2>
+<p style="text-align: center;"><strong><span style="font-size: 24px; color: rgb(32, 33, 34);">Question: Differentiate between classification and regression tasks with examples.</span></strong></p>
+<h2><span style="color: rgb(0, 68, 137); font-size: 32px;">Part 2: Setting Up Your Environment</span></h2>
+<ol>
+<li>We will use <strong>Anaconda Cloud</strong> for this lab (<a href="https://learning.anaconda.cloud/)">https://learning.anaconda.cloud/)</a>, which allows you to implement machine learning on the cloud without installing Anaconda on your computer. However, it has limits on storage and CPU use.</li>
+<li>To use&nbsp;<strong>Anaconda Cloud</strong>, you need to create an account. You can use Brunel's email to create an account. Please follow the link (<a href="https://id.anaconda.cloud/ui/login?flow=0ccce9fe-e68f-42ee-b8d1-002defa7428a)">https://id.anaconda.cloud/ui/login?flow=0ccce9fe-e68f-42ee-b8d1-002defa7428a)</a>. This shouldn't take more than 5 minutes. Alternatively, you can install the full package Anaconda on your computer. This will give you full control over how much storage you need.</li>
+<li>Go to the notebooks tab in Anaconda Cloud and open Jupyter Notebook. You can call it Lab#1 Image Classification.</li>
+</ol>
+<p><strong><span style="font-size: 32px; color: rgb(0, 68, 137);">Part 3: Dataset<br></span></strong></p>
+<ol>
+<li>We will use a dataset from Stanford University, which is publicly available <a href="http://ufldl.stanford.edu/housenumbers/">http://ufldl.stanford.edu/housenumbers/</a>. The dataset is called The Street View House Numbers (SVHN), and it contains real-world images of street view house numbers and their labels.&nbsp;</li>
+<li>There are ten classes, 1 for each digit. Digit '1' has label 1, '9' has label 9 and '0' has label 10.&nbsp;</li>
+<li>We need to download the dataset, and for this lab we will use a cropped and preprocessed dataset. That is&nbsp;<a href="http://ufldl.stanford.edu/housenumbers/extra.tar.gz" target="_self">extra_32x32.mat.</a> This is a Matlab file that is a lightweight version of the dataset.</li>
+</ol>
+<p><strong><span style="font-size: 32px; color: rgb(0, 68, 137);">Part 4: Import the necessary libraries</span></strong></p>
+<ol>
+<li>We need to import the required libraries for this task, which are:</li>
+</ol>
+<p><code>numpy: a Python library used for working with arrays.</code></p>
+<p><code>scipy: a Python library that provide you tools for optimisation, linear algebra, integration, interpolation, special functions, FFT, signal and image processing, ODE solvers<br></code><code>matplotlib: a Python library for creating static, animated, and interactive visualisations.</code></p>
+<p><strong>&nbsp;&nbsp; </strong>2.<strong> </strong>The code needed to import these libraries into your environment is written below:</p>
+<p><strong>Code:</strong></p>
+<p><code>
+        # Required libraries<br>import scipy.io <br>import numpy as np<br>
+        import matplotlib.pyplot as plt<br>
+    </code></p>
+<h2><span style="color: rgb(0, 68, 137);">Part 5: Load the dataset in your Python</span></h2>
+<ol>
+<li>Load the dataset into your Python environment.</li>
+</ol>
+<p><strong>Code:</strong></p>
+<p><code>&nbsp;            # Load dataset<br>train_data = scipy.io.loadmat('extra_32x32.mat')<br></code></p>
+<p>&nbsp;&nbsp; 2. This is a supervised learning problem. We will need both images and labels. The dataset is in the form of a .mat file, but we need to extract images and labels.</p>
+<p><strong>Code:</strong></p>
+<p><code># extract the images and labels from the dictionary object</code></p>
+<p><code>X = train_data['X']</code></p>
+<p><code>y = train_data['y']</code></p>
+<p>&nbsp; 3. To test if you can extract the images and labels correctly, we test to display image 27 using matplotlib.</p>
+<p><strong>Code:</strong></p>
+<p><code># view an image (e.g. 27) and print its corresponding label</code></p>
+<p><code>img_index = 27</code></p>
+<p><code>plt.imshow(X[:,:,:,img_index])</code></p>
+<p><code>plt.show()</code><code>print(y[img_index])</code></p>
+<h2><span style="color: rgb(0, 68, 137);">Part 6: Vectorising images in machine learning</span></h2>
+<p>Vectorisation of the dataset is the process of transforming data (such as images or text) into vectors. In machine learning models, vectors represent both the input data (images) and the output data (labels).</p>
+<p style="text-align: center;"><span style="font-size: 24px;"><strong>Question: Can you explain the need for vectorising images in machine learning?</strong></span></p>
+<p><strong>Code</strong></p>
+<p><code>X = X.reshape(X.shape[0]*X.shape[1]*X.shape[2],X.shape[3]).T</code></p>
+<p><code>y = y.reshape(y.shape[0],)</code></p>
+<h2><span style="color: rgb(0, 68, 137);">Part 7: Machine Learning Model</span></h2>
+<ol>
+<li style="color: rgb(32, 33, 34);"><span style="color: rgb(32, 33, 34);">Shuffle the data. We will use shuffle from the&nbsp;</span><span style="color: rgb(32, 33, 34);">sklearn library,&nbsp;</span><span style="color: rgb(32, 33, 34);"></span><span style="color: rgb(32, 33, 34);">which ensures that the index pairings between our images in X and their labels in y are maintained through the shuffling process. You can use the parameter random_state=42.&nbsp;</span><span style="color: rgb(32, 33, 34);"></span></li>
+</ol>
+<p style="color: rgb(32, 33, 34); text-align: center;"><span style="color: rgb(32, 33, 34);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="font-size: 24px;"><strong>Question: What is sklearn?</strong></span></span><span style="color: rgb(32, 33, 34);"></span></p>
+<p style="color: rgb(32, 33, 34);"><strong><span style="color: rgb(32, 33, 34);">Code:</span></strong></p>
+<p><code>from sklearn.utils import shuffle</code></p>
+<p><code>X, y = shuffle(X, y, random_state=42)</code></p>
+<p style="text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp; 2. Implement a Random Forest classifier using scikit-learn. We will use a Random Forest approach with the default <strong>hyperparameters</strong>. You can learn more about Random Forests <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html" target="_blank" rel="noopener">here.&nbsp;</a>Random forests are a construction of multiple decision trees with an output that averages the results of individual trees to prevent fitting too closely to any one tree.&nbsp;</p>
+<p style="text-align: center;"><span style="font-size: 24px;"><strong>Questions:</strong></span>&nbsp;<strong><span style="font-size: 24px;">What are hyperparameters? </span></strong><strong><span style="font-size: 24px;">What do overfitting and underfitting mean?</span></strong></p>
+<p><strong>Code:</strong></p>
+<p><code>
+            # Initialize classifier</code></p>
+<p><code>from sklearn.ensemble import RandomForestClassifier<br>
+            </code></p>
+<p><code>clf = RandomForestClassifier()
+       &nbsp;</code></p>
+<p><code>print(clf)</code></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 3. Split the dataset into training (80%) and testing (20%). Usually, we use between 70-90% of the data for training. However, this varies depending on the amount of data collected and the type of model trained.</p>
+<p><strong>Code:</strong></p>
+<p><code>
+            # Split the data</code></p>
+<p><code>from sklearn.model_selection import train_test_split</code></p>
+<p><code>X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)&nbsp;</code></p>
+<p><code>clf.fit(X_train, y_train)</code></p>
+<p><code>y_pred = clf.predict(X_test)</code><span style="color: rgb(0, 68, 137);"><span style="color: rgb(32, 33, 34);"></span></span></p>
+<p><span style="color: rgb(0, 68, 137);"><span style="color: rgb(32, 33, 34);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4. Use the trained model to make predictions on new data.</span><br></span></p>
+<p><strong>Code:</strong></p>
+<p><code># Accuracy score<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </code></p>
+<pre><code data-highlighted="yes">from sklearn.metrics import accuracy_score</code></pre>
+<p><code>accuracy = accuracy_score(y_test, y_pred)<br>
+            print(f"Accuracy: {accuracy * 100:.2f}%")
+        </code></p>
+<h2 style="text-align: center;"><span style="color: rgb(32, 33, 34); font-size: 24px;">Question: How has the accuracy_score been calculated?</span></h2>
+<h2><span style="color: rgb(0, 68, 137);">Part 8: Reflection</span></h2>
+<ol>
+<li>Why did the model perform at the observed accuracy?</li>
+<li>Suggest two ways you can improve the classifier’s performance.</li>
+</ol></body></html>
